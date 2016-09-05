@@ -58,4 +58,17 @@ $ ./cat-file 78abe3733f50fb48969f05410823fd83669de63e
 my file to add in the index
 ```
 
+configuration
+=============
+gt supports configuration through environment variables:
+* GT_DIRECTORY: specify where gt is going to work (default is .gt/)
+
+example
+``` sh
+$ echo "file content" | GT_DIRECTORY=".storage" ./hash-blob --write
+d1ccbc3bf5c306c3334abcc5465ef32ee7914c77
+```
+
+Note: make sure to create the directory (mkdir -p .storage/objects) beforehand
+
 [1]: https://git-scm.com/book/en/v2/Git-Internals-Git-Objects
