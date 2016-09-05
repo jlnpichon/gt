@@ -52,4 +52,10 @@ $ tree .gt
 ```
 Note the creation of the '.gt/index' file
 
+cat the content of a blob
+``` sh
+$ ./cat-file 78abe3733f50fb48969f05410823fd83669de63e
+my file to add in the index
+```
+
 [1]: https://git-scm.com/book/en/v2/Git-Internals-Git-Objects
