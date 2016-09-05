@@ -182,7 +182,7 @@ int buffer_sha1_write(uint8_t *sha1,
 	filename = sha1_filename(sha1);
 
 retry:
-	fd = open(filename, O_CREAT|O_EXCL|O_WRONLY);
+	fd = open(filename, O_CREAT|O_EXCL|O_WRONLY, 0444);
 	if (fd < 0) {
 		if (errno == EEXIST) {
 			return 0;
