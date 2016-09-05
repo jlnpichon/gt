@@ -82,7 +82,6 @@ int main(int argc, char *argv[])
 			fprintf(stdout, "%s %s\n", sha12hex(sha1), arg);
 	}
 
-
 	index_close(index, &error);
 
 	return 0;
