@@ -43,6 +43,8 @@ struct index {
 char *sha12hex(uint8_t *sha1);
 char *sha1_filename(uint8_t *sha1);
 
+int hex2sha1(const char *hex, uint8_t *sha1);
+
 int gt_directory_check(char **error);
 
 int object_hash(uint8_t *buffer, size_t bytes, char *type,
@@ -54,5 +56,7 @@ int index_close(struct index *index, char **error);
 
 int index_file_add(struct index *index, const char *filename,
 		uint8_t *sha1, char **error);
+
+uint8_t *file_sha1_read(uint8_t *sha1, uint64_t *buffer_bytes, char **error);
 
 #endif /* INDEX_H */

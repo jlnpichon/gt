@@ -7,4 +7,4 @@ all:
 	gcc -Wall $(CFLAGS) update-index.c -o update-index common.o index.o -lcrypto -lz
 
 clean:
-	rm *.o update-index hash-blob
+	rm *.o cat-file hash-blob update-index

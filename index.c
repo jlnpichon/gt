@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <libgen.h>
@@ -156,6 +157,35 @@ char *sha12hex(uint8_t *sha1)
 	return sha1_ascii;
 }
 
+static uint8_t hexval(uint8_t c)
+{
+	if (c >= '0' && c <= '9')
+		return c - '0';
+	else if (c >= 'a' && c <= 'f')
+		return c - 'a' + 10;
+	else if (c >= 'A' && c <= 'F')
+		return c - 'A' + 10;
+	else
+		return -1;
+}
+
+int hex2sha1(const char *hex, uint8_t *sha1)
+{
+	int i;
+
+	if (strlen(hex) != 40)
+		return -1;
+
+	for (i = 0; i < 20; i++) {
+		if (*hex == '\0' || !isxdigit(*hex))
+			return -1;
+		sha1[i] = (hexval(hex[2 * i]) << 4) & 0xf0;
+		sha1[i] |= hexval(hex[2 * i + 1]) & 0x0f;
+	}
+
+	return 0;
+}
+
 char *sha1_filename(uint8_t *sha1)
 {
 	char *directory;
@@ -170,6 +200,86 @@ char *sha1_filename(uint8_t *sha1)
 			directory, sha1_ascii[0], sha1_ascii[1], &sha1_ascii[2]);
 
 	return filename;
+}
+
+void *file_sha1_map(uint8_t *sha1, size_t *map_bytes, char **error)
+{
+	int fd;
+	void *map;
+	const char *filename;
+	struct stat st;
+
+	*map_bytes = 0;
+	filename = sha1_filename(sha1);
+	fd = open(filename, O_RDONLY);
+	if (fd < 0) {
+		asprintf(error, "open '%s' fail: %m", filename);
+		return NULL;
+	}
+	if (fstat(fd, &st) < 0) {
+		close(fd);
+		return NULL;
+	}
+	map = mmap(NULL, st.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
+	close(fd);
+	if (map == (void *) -1)
+		return NULL;
+	*map_bytes = st.st_size;
+
+	return map;
+}
+
+uint8_t *file_sha1_inflate(void *map, size_t map_bytes, uint64_t *buffer_bytes)
+{
+	int result;
+	char chunk[8192];
+	char type[32];
+	int bytes;
+	uint8_t *buffer;
+	z_stream stream;
+
+	memset(&stream, 0, sizeof(stream));
+	stream.next_in = map;
+	stream.avail_in = map_bytes;
+	stream.next_out = (uint8_t *) chunk;
+	stream.avail_out = sizeof(chunk);
+
+	inflateInit(&stream);
+	result = inflate(&stream, 0);
+	if (sscanf(chunk, "%10s %lu", type, buffer_bytes) != 2)
+		return NULL;
+
+	bytes = strlen(chunk) + 1;
+	buffer = malloc(*buffer_bytes);
+	if (!buffer)
+		return NULL;
+
+	memcpy(buffer, chunk + bytes, stream.total_out - bytes);
+	bytes = stream.total_out - bytes;
+	if (bytes < *buffer_bytes && result == Z_OK) {
+		stream.next_out = buffer + bytes;
+		stream.avail_out = *buffer_bytes - bytes;
+		while (inflate(&stream, Z_FINISH) == Z_OK);
+	}
+	inflateEnd(&stream);
+	return buffer;
+}
+
+uint8_t *file_sha1_read(uint8_t *sha1, uint64_t *buffer_bytes, char **error)
+{
+	void *map;
+	uint8_t *buffer;
+	size_t map_bytes;
+
+	map = file_sha1_map(sha1, &map_bytes, error);
+	if (!map) {
+		*buffer_bytes = 0;
+		return NULL;
+	}
+	buffer = file_sha1_inflate(map, map_bytes, buffer_bytes);
+	munmap(map, map_bytes);
+
+	return buffer;
 }
 
 int buffer_sha1_write(uint8_t *sha1,
