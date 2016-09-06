@@ -1,5 +1,6 @@
 CFLAGS=-g -I./ -D_GNU_SOURCE
 all:
+	gcc -Wall $(CFLAGS) -c buffer.c -o buffer.o
 	gcc -Wall $(CFLAGS) -c common.c -o common.o
 	gcc -Wall $(CFLAGS) -c index.c -o index.o
 	gcc -Wall $(CFLAGS) cat-file.c -o cat-file common.o index.o -lcrypto -lz
