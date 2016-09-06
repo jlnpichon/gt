@@ -338,6 +338,11 @@ int buffer_sha1(uint8_t *buffer, size_t bytes,
 	return 0;
 }
 
+int file_sha1_write(uint8_t *buffer, size_t bytes, uint8_t *sha1, char **error)
+{
+	return buffer_sha1(buffer, bytes, 1, sha1, error);
+}
+
 int object_hash(uint8_t *buffer, size_t bytes, char *type,
 		int write, uint8_t *sha1,
 		char **error)
@@ -559,7 +564,7 @@ int index_file_add(struct index *index, const char *filename,
 	entry->st_uid = st.st_uid;
 	entry->st_gid = st.st_gid;
 	entry->st_size = st.st_size;
-	memcpy(entry->sha1, sha1, sizeof(*sha1));
+	memcpy(entry->sha1, sha1, sizeof(entry->sha1));
 	entry->name_bytes = strlen(filename);
 	memcpy(entry->name, filename, strlen(filename));
 
