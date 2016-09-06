@@ -66,4 +66,3 @@ int file_read(const char *filename,
 
 	return fd_read(fd, buffer, bytes, error);
 }
-

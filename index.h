@@ -58,5 +58,6 @@ int index_file_add(struct index *index, const char *filename,
 		uint8_t *sha1, char **error);
 
 uint8_t *file_sha1_read(uint8_t *sha1, uint64_t *buffer_bytes, char **error);
+int file_sha1_write(uint8_t *buffer, size_t bytes, uint8_t *sha1, char **error);
 
 #endif /* INDEX_H */

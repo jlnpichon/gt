@@ -58,6 +58,12 @@ $ ./cat-file 78abe3733f50fb48969f05410823fd83669de63e
 my file to add in the index
 ```
 
+Create a tree object from the current index (staging area)
+``` sh
+$ ./write-tree
+6278abe3733f50fb48969f05410823fd83669de63e
+```
+
 configuration
 =============
 gt supports configuration through environment variables:
