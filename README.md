@@ -64,6 +64,12 @@ $ ./write-tree
 6278abe3733f50fb48969f05410823fd83669de63e
 ```
 
+Create a commit
+``` sh
+$ echo "This is my first commit" | ./commit-tree 620f7b33f0c2f3bbf367ecb9e101bc642363dae9
+4b808b9f7ca27678289ba54ba2dd24635d929ed0
+```
+
 configuration
 =============
 gt supports configuration through environment variables:
