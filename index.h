@@ -24,14 +24,14 @@ struct index_entry {
 	uint8_t sha1[20];
 	uint16_t name_bytes;
 	char name[0];
-};
+} __attribute__ ((packed));
 
 struct index_header {
 	uint32_t signature;
 	uint32_t version;
 	uint32_t entries_count;
 	uint8_t sha1[20];
-};
+} __attribute__ ((packed));
 
 struct index {
 	char *path;
