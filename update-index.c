@@ -78,11 +78,15 @@ int main(int argc, char *argv[])
 			free(error);
 			continue;
 		}
+		add++;
 		if (verbose)
 			fprintf(stdout, "%s %s\n", sha12hex(sha1), arg);
 	}
 
 	index_close(index, &error);
+
+	if (add < 2)
+		return usage(argv[0], 1, "you must provide a file to add");
 
 	return 0;
 }

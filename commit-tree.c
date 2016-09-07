@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
 		return usage(argv[0], 1, "missing argument");
 
 	if (hex2sha1(argv[1], tree_sha1) < 0)
-		return usage(argv[0], 0, "invalid sha1: %s", argv[1]);
+		return usage(argv[0], 1, "invalid sha1: '%s'", argv[1]);
 
 	stop_options = parents_count = 0;
 	for (i = 2; i < argc; i += 2) {
@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
 			if (!strncmp(arg_name, "--parent", sizeof("--parent")) ||
 					!strncmp(arg_name, "-p", sizeof("-p"))) {
 					if (hex2sha1(arg_value, parents[parents_count++]) < 0)
-						return usage(argv[0], 0, "invalid sha1: %s", arg_value);
+						return usage(argv[0], 1, "invalid sha1: '%s'", arg_value);
 					continue;
 			}
 			if (!strncmp(arg_name, "--help", sizeof("--help")) ||
