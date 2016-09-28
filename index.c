@@ -564,6 +564,8 @@ int index_file_add(struct index *index, const char *filename,
 	entry->st_uid = st.st_uid;
 	entry->st_gid = st.st_gid;
 	entry->st_size = st.st_size;
+	entry->mtime.seconds = st.st_mtim.tv_sec;
+	entry->ctime.seconds = st.st_ctim.tv_sec;
 	memcpy(entry->sha1, sha1, sizeof(entry->sha1));
 	entry->name_bytes = strlen(filename);
 	memcpy(entry->name, filename, strlen(filename));
